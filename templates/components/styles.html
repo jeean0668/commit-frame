@@ -23,79 +23,104 @@
         margin-left: 40%;
     }
 
+    .git-graph-container {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
     .git-graph {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        width: 40%;
-        max-height: calc(100vh - 40px);
-        overflow-y: auto;
-        position: fixed;
-        left: -40%;
-        top: 20px;
-        bottom: 20px;
-        transition: left 0.3s ease;
-        z-index: 1000;
-    }
-
-    .git-graph.show {
-        left: 0;
-    }
-
-    .git-graph h2 {
-        font-size: 20px;
-        color: #333;
-        margin-bottom: 15px;
-        text-align: center;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
+        flex-direction: column;
+        gap: 20px;
     }
 
     .commit-node {
+        display: flex;
+        flex-direction: column;
         position: relative;
-        padding: 10px;
-        margin: 10px 0;
-        border-left: 3px solid #5c67f2;
-        background-color: #f8f9fa;
-        border-radius: 0 5px 5px 0;
     }
 
-    .commit-node.current {
-        border-left-color: #28a745;
-        background-color: #e8f5e9;
+    .commit-info {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 16px;
+        margin-left: 24px;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+
+    .commit-info:hover {
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .commit-info::before {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 50%;
+        width: 24px;
+        height: 2px;
+        background: #dee2e6;
     }
 
     .commit-hash {
-        font-family: monospace;
-        color: #666;
-        font-size: 14px;
+        color: #22863a;
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.9em;
+        margin-bottom: 6px;
+        font-weight: 600;
     }
 
     .commit-message {
-        margin: 5px 0;
-        color: #333;
+        color: #24292e;
+        margin-bottom: 10px;
+        font-size: 1.1em;
+        line-height: 1.4;
     }
 
     .commit-meta {
-        font-size: 12px;
-        color: #888;
+        font-size: 0.9em;
+        color: #6c757d;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .commit-author {
+        font-weight: 500;
+    }
+
+    .commit-date {
+        color: #868e96;
     }
 
     .commit-branches {
-        margin-top: 5px;
+        margin-top: 10px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
     }
 
     .branch-tag {
-        display: inline-block;
-        padding: 2px 6px;
-        background-color: #e8e8ff;
-        color: #5c67f2;
-        border-radius: 3px;
-        font-size: 12px;
-        margin-right: 5px;
+        background: #e7f5ff;
+        color: #1971c2;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 0.85em;
+        font-weight: 500;
+        border: 1px solid #d0ebff;
+    }
+
+    .commit-line {
+        height: 24px;
+        width: 2px;
+        background: #dee2e6;
+        margin-left: 12px;
     }
 
     .container {

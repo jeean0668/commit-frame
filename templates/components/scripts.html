@@ -151,29 +151,4 @@
             });
         }
     });
-
-    // 히스토리 토글 기능
-    function toggleHistory() {
-        const gitGraph = document.querySelector('.git-graph');
-        const toggleButton = document.querySelector('.toggle-history');
-        const mainContainer = document.querySelector('.main-container');
-        
-        gitGraph.classList.toggle('show');
-        toggleButton.classList.toggle('show');
-        mainContainer.classList.toggle('history-visible');
-    }
-
-    // 페이지 로드 시 히스토리 상태 저장
-    document.addEventListener('DOMContentLoaded', function() {
-        const isHistoryVisible = localStorage.getItem('historyVisible') === 'true';
-        if (isHistoryVisible) {
-            toggleHistory();
-        }
-    });
-
-    // 히스토리 토글 시 상태 저장
-    document.querySelector('.toggle-history').addEventListener('click', function() {
-        const isVisible = document.querySelector('.git-graph').classList.contains('show');
-        localStorage.setItem('historyVisible', isVisible);
-    });
 </script> 
