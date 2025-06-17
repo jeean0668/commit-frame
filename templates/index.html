@@ -30,6 +30,32 @@
             color: #333;
             text-align: center;
             margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .refresh-icon {
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .refresh-icon:hover {
+            transform: rotate(180deg);
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .refresh-icon:active {
+            transform: rotate(180deg) scale(0.95);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
 
         label {
@@ -71,11 +97,45 @@
             color: #888;
             margin-top: 20px;
         }
+
+        .current-branch-info {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .current-branch-info p {
+            margin: 0;
+            color: #333;
+        }
+        .current-branch-info strong {
+            color: #5c67f2;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .button-group button {
+            flex: 1;
+        }
+        #refresh_button {
+            background-color: #6c757d;
+        }
+        #refresh_button:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Git Commit/Merge Formatter</h1>
+        <h1>
+            Git Commit/Merge Formatter
+            <svg class="refresh-icon" onclick="location.reload()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+        </h1>
         <form action="/commit" method="POST">
             <label for="action_type">Select Action:</label>
             <select name="action_type" id="action_type" required>
@@ -86,6 +146,11 @@
 
             <!-- Commit 관련 입력 -->
             <div id="commit_fields">
+                <div class="current-branch-info">
+                    <p>현재 브랜치: <strong>{{ current_branch }}</strong></p>
+                </div>
+                <br>
+
                 <label for="commit_type">Commit Type:</label>
                 <select name="commit_type" id="commit_type" required>
                     {% for commit_type in commit_types %}
@@ -105,10 +170,15 @@
 
             <!-- Merge 관련 입력 -->
             <div id="merge_fields" style="display: none;">
+                <div class="current-branch-info">
+                    <p>현재 브랜치: <strong>{{ current_branch }}</strong></p>
+                </div>
+                <br>
+
                 <label for="source_branch">Source Branch:</label>
                 <select name="source_branch" id="source_branch">
                     {% for branch in branches %}
-                        <option value="{{ branch }}">{{ branch }}</option>
+                        <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
                     {% endfor %}
                 </select>
                 <br><br>
@@ -122,7 +192,9 @@
                 <br><br>
             </div>
 
-            <button type="submit" id="submit_button">Execute</button>
+            <div class="button-group">
+                <button type="submit" id="submit_button">Execute</button>
+            </div>
         </form>
         <div class="footer">
             <p>Powered by Toothy - Git Commit/Merge Formatter</p>

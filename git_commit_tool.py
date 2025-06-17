@@ -45,7 +45,8 @@ def index():
     """메인 페이지 (커밋 폼 제공)"""
     repo = git.Repo(repo_path)
     branches = [branch.name for branch in repo.branches]  # 모든 로컬 브랜치 목록 가져오기
-    return render_template('index.html', commit_types=commit_types, branches=branches)
+    current_branch = repo.active_branch.name  # 현재 브랜치 이름 가져오기
+    return render_template('index.html', commit_types=commit_types, branches=branches, current_branch=current_branch)
 
 @app.route('/commit', methods=['POST'])
 def commit():
