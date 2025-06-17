@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Commit/Merge Formatter</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #5c67f2;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4a54e1;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #888;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Git Commit/Merge Formatter</h1>
+        <form action="/commit" method="POST">
+            <label for="action_type">Select Action:</label>
+            <select name="action_type" id="action_type" required>
+                <option value="commit">Commit</option>
+                <option value="merge">Merge</option>
+            </select>
+            <br><br>
+
+            <!-- Commit 관련 입력 -->
+            <div id="commit_fields">
+                <label for="commit_type">Commit Type:</label>
+                <select name="commit_type" id="commit_type" required>
+                    {% for commit_type in commit_types %}
+                        <option value="{{ commit_type }}">{{ commit_type }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+
+                <label for="commit_title">Commit Title:</label>
+                <input type="text" id="commit_title" name="commit_title" required placeholder="Enter commit title">
+                <br><br>
+
+                <label for="commit_description">Commit Description:</label>
+                <textarea id="commit_description" name="commit_description" placeholder="Enter detailed commit description" required></textarea>
+                <br><br>
+            </div>
+
+            <!-- Merge 관련 입력 -->
+            <div id="merge_fields" style="display: none;">
+                <label for="source_branch">Source Branch:</label>
+                <select name="source_branch" id="source_branch" required>
+                    {% for branch in branches %}
+                        <option value="{{ branch }}">{{ branch }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+
+                <label for="target_branch">Target Branch:</label>
+                <select name="target_branch" id="target_branch" required>
+                    {% for branch in branches %}
+                        <option value="{{ branch }}">{{ branch }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+            </div>
+
+            <button type="submit">Execute</button>
+        </form>
+        <div class="footer">
+            <p>Powered by Toothy - Git Commit/Merge Formatter</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('action_type').addEventListener('change', function() {
+            if (this.value === 'merge') {
+                document.getElementById('commit_fields').style.display = 'none';
+                document.getElementById('merge_fields').style.display = 'block';
+            } else {
+                document.getElementById('commit_fields').style.display = 'block';
+                document.getElementById('merge_fields').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
