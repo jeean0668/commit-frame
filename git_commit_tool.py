@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import git
 import threading
 
@@ -38,6 +38,15 @@ def execute_merge(source_branch, target_branch):
     except git.exc.GitCommandError as e:
         # GitCommandError를 캐치해서 오류 메시지를 반환
         return f"An error occurred during merge: {e.stderr.decode('utf-8')}"
+    return None  # 성공 시 None을 반환
+
+def execute_checkout(branch):
+    """Git 리포지토리에서 브랜치 체크아웃을 실행"""
+    try:
+        repo = git.Repo(repo_path)
+        repo.git.checkout(branch)
+    except git.exc.GitCommandError as e:
+        return f"An error occurred during checkout: {e.stderr.decode('utf-8')}"
     return None  # 성공 시 None을 반환
 
 @app.route('/')
@@ -89,6 +98,21 @@ def failure():
     """커밋 또는 머지 실패 페이지"""
     error_message = request.args.get('error', 'An unknown error occurred.')
     return render_template('failure.html', error_message=error_message)
+
+@app.route('/checkout', methods=['POST'])
+def checkout():
+    """브랜치 체크아웃 요청을 처리"""
+    data = request.get_json()
+    branch = data.get('branch')
+    
+    if not branch:
+        return jsonify({'success': False, 'error': '브랜치가 지정되지 않았습니다.'})
+    
+    result_error = execute_checkout(branch)
+    if result_error:
+        return jsonify({'success': False, 'error': result_error})
+    
+    return jsonify({'success': True})
 
 def run_flask_app():
     """Flask 앱 실행"""

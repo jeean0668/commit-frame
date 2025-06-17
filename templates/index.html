@@ -103,14 +103,65 @@
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 15px;
+            position: relative;
+            cursor: pointer;
         }
+
         .current-branch-info p {
             margin: 0;
             color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
+
         .current-branch-info strong {
             color: #5c67f2;
         }
+
+        .branch-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .branch-dropdown.show {
+            display: block;
+        }
+
+        .branch-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .branch-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .branch-item.current {
+            background-color: #e8e8ff;
+            color: #5c67f2;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .current-branch-info.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
         .button-group {
             display: flex;
             gap: 10px;
@@ -146,8 +197,19 @@
 
             <!-- Commit 관련 입력 -->
             <div id="commit_fields">
-                <div class="current-branch-info">
-                    <p>현재 브랜치: <strong>{{ current_branch }}</strong></p>
+                <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                    <p>
+                        현재 브랜치: <strong>{{ current_branch }}</strong>
+                        <span class="dropdown-arrow">▼</span>
+                    </p>
+                    <div class="branch-dropdown">
+                        {% for branch in branches %}
+                            <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                 onclick="checkoutBranch('{{ branch }}', event)">
+                                {{ branch }}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <br>
 
@@ -170,8 +232,19 @@
 
             <!-- Merge 관련 입력 -->
             <div id="merge_fields" style="display: none;">
-                <div class="current-branch-info">
-                    <p>현재 브랜치: <strong>{{ current_branch }}</strong></p>
+                <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                    <p>
+                        현재 브랜치: <strong>{{ current_branch }}</strong>
+                        <span class="dropdown-arrow">▼</span>
+                    </p>
+                    <div class="branch-dropdown">
+                        {% for branch in branches %}
+                            <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                 onclick="checkoutBranch('{{ branch }}', event)">
+                                {{ branch }}
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <br>
 
@@ -247,6 +320,57 @@
             if (this.value === sourceBranch.value) {
                 alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
                 this.value = '';
+            }
+        });
+
+        function toggleBranchDropdown(element) {
+            const dropdown = element.querySelector('.branch-dropdown');
+            const isActive = element.classList.contains('active');
+            
+            // 다른 모든 드롭다운 닫기
+            document.querySelectorAll('.branch-dropdown.show').forEach(d => {
+                if (d !== dropdown) {
+                    d.classList.remove('show');
+                    d.parentElement.classList.remove('active');
+                }
+            });
+
+            // 현재 드롭다운 토글
+            dropdown.classList.toggle('show');
+            element.classList.toggle('active');
+        }
+
+        function checkoutBranch(branch, event) {
+            event.stopPropagation();
+            if (branch === '{{ current_branch }}') return;
+
+            fetch('/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ branch: branch })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('브랜치 전환 중 오류가 발생했습니다: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('브랜치 전환 중 오류가 발생했습니다: ' + error);
+            });
+        }
+
+        // 드롭다운 외부 클릭 시 닫기
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.current-branch-info')) {
+                document.querySelectorAll('.branch-dropdown.show').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                    dropdown.parentElement.classList.remove('active');
+                });
             }
         });
     </script>
