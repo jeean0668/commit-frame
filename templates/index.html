@@ -106,7 +106,7 @@
             <!-- Merge 관련 입력 -->
             <div id="merge_fields" style="display: none;">
                 <label for="source_branch">Source Branch:</label>
-                <select name="source_branch" id="source_branch" required>
+                <select name="source_branch" id="source_branch">
                     {% for branch in branches %}
                         <option value="{{ branch }}">{{ branch }}</option>
                     {% endfor %}
@@ -114,7 +114,7 @@
                 <br><br>
 
                 <label for="target_branch">Target Branch:</label>
-                <select name="target_branch" id="target_branch" required>
+                <select name="target_branch" id="target_branch">
                     {% for branch in branches %}
                         <option value="{{ branch }}">{{ branch }}</option>
                     {% endfor %}
@@ -122,7 +122,7 @@
                 <br><br>
             </div>
 
-            <button type="submit">Execute</button>
+            <button type="submit" id="submit_button">Execute</button>
         </form>
         <div class="footer">
             <p>Powered by Toothy - Git Commit/Merge Formatter</p>
@@ -131,12 +131,50 @@
 
     <script>
         document.getElementById('action_type').addEventListener('change', function() {
+            const commitFields = document.getElementById('commit_fields');
+            const mergeFields = document.getElementById('merge_fields');
+            const commitType = document.getElementById('commit_type');
+            const commitTitle = document.getElementById('commit_title');
+            const commitDescription = document.getElementById('commit_description');
+            const sourceBranch = document.getElementById('source_branch');
+            const targetBranch = document.getElementById('target_branch');
+            const submitButton = document.getElementById('submit_button');
+
             if (this.value === 'merge') {
-                document.getElementById('commit_fields').style.display = 'none';
-                document.getElementById('merge_fields').style.display = 'block';
+                commitFields.style.display = 'none';
+                mergeFields.style.display = 'block';
+                commitType.removeAttribute('required');
+                commitTitle.removeAttribute('required');
+                commitDescription.removeAttribute('required');
+                sourceBranch.setAttribute('required', '');
+                targetBranch.setAttribute('required', '');
+                submitButton.textContent = 'Merge';
             } else {
-                document.getElementById('commit_fields').style.display = 'block';
-                document.getElementById('merge_fields').style.display = 'none';
+                commitFields.style.display = 'block';
+                mergeFields.style.display = 'none';
+                commitType.setAttribute('required', '');
+                commitTitle.setAttribute('required', '');
+                commitDescription.setAttribute('required', '');
+                sourceBranch.removeAttribute('required');
+                targetBranch.removeAttribute('required');
+                submitButton.textContent = 'Commit';
+            }
+        });
+
+        // 소스 브랜치와 타겟 브랜치가 같은 경우를 방지
+        document.getElementById('source_branch').addEventListener('change', function() {
+            const targetBranch = document.getElementById('target_branch');
+            if (this.value === targetBranch.value) {
+                alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
+                this.value = '';
+            }
+        });
+
+        document.getElementById('target_branch').addEventListener('change', function() {
+            const sourceBranch = document.getElementById('source_branch');
+            if (this.value === sourceBranch.value) {
+                alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
+                this.value = '';
             }
         });
     </script>
