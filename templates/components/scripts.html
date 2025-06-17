@@ -1,0 +1,179 @@
+<script>
+    document.getElementById('action_type').addEventListener('change', function() {
+        const commitFields = document.getElementById('commit_fields');
+        const mergeFields = document.getElementById('merge_fields');
+        const branchFields = document.getElementById('branch_fields');
+        const pullFields = document.getElementById('pull_fields');
+        const pushFields = document.getElementById('push_fields');
+        const commitType = document.getElementById('commit_type');
+        const commitTitle = document.getElementById('commit_title');
+        const commitDescription = document.getElementById('commit_description');
+        const sourceBranch = document.getElementById('source_branch');
+        const targetBranch = document.getElementById('target_branch');
+        const newBranchName = document.getElementById('new_branch_name');
+        const baseBranch = document.getElementById('base_branch');
+        const pullBranch = document.getElementById('pull_branch');
+        const pushBranch = document.getElementById('push_branch');
+        const submitButton = document.getElementById('submit_button');
+
+        // 모든 필드 숨기기
+        commitFields.style.display = 'none';
+        mergeFields.style.display = 'none';
+        branchFields.style.display = 'none';
+        pullFields.style.display = 'none';
+        pushFields.style.display = 'none';
+
+        // 선택된 액션에 따라 필드 표시
+        if (this.value === 'merge') {
+            mergeFields.style.display = 'block';
+            commitType.removeAttribute('required');
+            commitTitle.removeAttribute('required');
+            commitDescription.removeAttribute('required');
+            sourceBranch.setAttribute('required', '');
+            targetBranch.setAttribute('required', '');
+            newBranchName.removeAttribute('required');
+            baseBranch.removeAttribute('required');
+            pullBranch.removeAttribute('required');
+            submitButton.textContent = 'Merge';
+        } else if (this.value === 'branch') {
+            branchFields.style.display = 'block';
+            commitType.removeAttribute('required');
+            commitTitle.removeAttribute('required');
+            commitDescription.removeAttribute('required');
+            sourceBranch.removeAttribute('required');
+            targetBranch.removeAttribute('required');
+            newBranchName.setAttribute('required', '');
+            baseBranch.setAttribute('required', '');
+            pullBranch.removeAttribute('required');
+            submitButton.textContent = 'Create Branch';
+        } else if (this.value === 'pull') {
+            pullFields.style.display = 'block';
+            commitType.removeAttribute('required');
+            commitTitle.removeAttribute('required');
+            commitDescription.removeAttribute('required');
+            sourceBranch.removeAttribute('required');
+            targetBranch.removeAttribute('required');
+            newBranchName.removeAttribute('required');
+            baseBranch.removeAttribute('required');
+            pullBranch.setAttribute('required', '');
+            pushBranch.removeAttribute('required');
+            submitButton.textContent = 'Pull';
+        } else if (this.value === 'push') {
+            pushFields.style.display = 'block';
+            commitType.removeAttribute('required');
+            commitTitle.removeAttribute('required');
+            commitDescription.removeAttribute('required');
+            sourceBranch.removeAttribute('required');
+            targetBranch.removeAttribute('required');
+            newBranchName.removeAttribute('required');
+            baseBranch.removeAttribute('required');
+            pullBranch.removeAttribute('required');
+            pushBranch.setAttribute('required', '');
+            submitButton.textContent = 'Push';
+        } else {
+            commitFields.style.display = 'block';
+            commitType.setAttribute('required', '');
+            commitTitle.setAttribute('required', '');
+            commitDescription.setAttribute('required', '');
+            sourceBranch.removeAttribute('required');
+            targetBranch.removeAttribute('required');
+            newBranchName.removeAttribute('required');
+            baseBranch.removeAttribute('required');
+            pullBranch.removeAttribute('required');
+            submitButton.textContent = 'Commit';
+        }
+    });
+
+    // 소스 브랜치와 타겟 브랜치가 같은 경우를 방지
+    document.getElementById('source_branch').addEventListener('change', function() {
+        const targetBranch = document.getElementById('target_branch');
+        if (this.value === targetBranch.value) {
+            alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
+            this.value = '';
+        }
+    });
+
+    document.getElementById('target_branch').addEventListener('change', function() {
+        const sourceBranch = document.getElementById('source_branch');
+        if (this.value === sourceBranch.value) {
+            alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
+            this.value = '';
+        }
+    });
+
+    function toggleBranchDropdown(element) {
+        const dropdown = element.querySelector('.branch-dropdown');
+        const isActive = element.classList.contains('active');
+        
+        // 다른 모든 드롭다운 닫기
+        document.querySelectorAll('.branch-dropdown.show').forEach(d => {
+            if (d !== dropdown) {
+                d.classList.remove('show');
+                d.parentElement.classList.remove('active');
+            }
+        });
+
+        // 현재 드롭다운 토글
+        dropdown.classList.toggle('show');
+        element.classList.toggle('active');
+    }
+
+    function checkoutBranch(branch, event) {
+        event.stopPropagation();
+        if (branch === '{{ current_branch }}') return;
+
+        fetch('/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ branch: branch })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('브랜치 전환 중 오류가 발생했습니다: ' + data.error);
+            }
+        })
+        .catch(error => {
+            alert('브랜치 전환 중 오류가 발생했습니다: ' + error);
+        });
+    }
+
+    // 드롭다운 외부 클릭 시 닫기
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.current-branch-info')) {
+            document.querySelectorAll('.branch-dropdown.show').forEach(dropdown => {
+                dropdown.classList.remove('show');
+                dropdown.parentElement.classList.remove('active');
+            });
+        }
+    });
+
+    // 히스토리 토글 기능
+    function toggleHistory() {
+        const gitGraph = document.querySelector('.git-graph');
+        const toggleButton = document.querySelector('.toggle-history');
+        const mainContainer = document.querySelector('.main-container');
+        
+        gitGraph.classList.toggle('show');
+        toggleButton.classList.toggle('show');
+        mainContainer.classList.toggle('history-visible');
+    }
+
+    // 페이지 로드 시 히스토리 상태 저장
+    document.addEventListener('DOMContentLoaded', function() {
+        const isHistoryVisible = localStorage.getItem('historyVisible') === 'true';
+        if (isHistoryVisible) {
+            toggleHistory();
+        }
+    });
+
+    // 히스토리 토글 시 상태 저장
+    document.querySelector('.toggle-history').addEventListener('click', function() {
+        const isVisible = document.querySelector('.git-graph').classList.contains('show');
+        localStorage.setItem('historyVisible', isVisible);
+    });
+</script> 

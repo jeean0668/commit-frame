@@ -1,0 +1,291 @@
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .main-container {
+        display: flex;
+        gap: 20px;
+        padding: 20px;
+        width: 100%;
+        max-width: 1200px;
+        transition: margin-left 0.3s ease;
+    }
+
+    .main-container.history-visible {
+        margin-left: 40%;
+    }
+
+    .git-graph {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 40%;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        position: fixed;
+        left: -40%;
+        top: 20px;
+        bottom: 20px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .git-graph.show {
+        left: 0;
+    }
+
+    .git-graph h2 {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .commit-node {
+        position: relative;
+        padding: 10px;
+        margin: 10px 0;
+        border-left: 3px solid #5c67f2;
+        background-color: #f8f9fa;
+        border-radius: 0 5px 5px 0;
+    }
+
+    .commit-node.current {
+        border-left-color: #28a745;
+        background-color: #e8f5e9;
+    }
+
+    .commit-hash {
+        font-family: monospace;
+        color: #666;
+        font-size: 14px;
+    }
+
+    .commit-message {
+        margin: 5px 0;
+        color: #333;
+    }
+
+    .commit-meta {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .commit-branches {
+        margin-top: 5px;
+    }
+
+    .branch-tag {
+        display: inline-block;
+        padding: 2px 6px;
+        background-color: #e8e8ff;
+        color: #5c67f2;
+        border-radius: 3px;
+        font-size: 12px;
+        margin-right: 5px;
+    }
+
+    .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: 60%;
+    }
+
+    h1 {
+        font-size: 24px;
+        color: #333;
+        text-align: center;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .refresh-icon {
+        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        transition: all 0.3s ease;
+        padding: 8px;
+        border-radius: 50%;
+        background-color: #f0f0f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .refresh-icon:hover {
+        transform: rotate(180deg);
+        background-color: #e0e0e0;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .refresh-icon:active {
+        transform: rotate(180deg) scale(0.95);
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    select, input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        box-sizing: border-box;
+    }
+
+    button {
+        background-color: #5c67f2;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+        background-color: #4a54e1;
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #888;
+        margin-top: 20px;
+    }
+
+    .current-branch-info {
+        background-color: #f0f0f0;
+        padding: 10px;
+        border-radius: 5px;
+        margin-bottom: 15px;
+        position: relative;
+        cursor: pointer;
+    }
+
+    .current-branch-info p {
+        margin: 0;
+        color: #333;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .current-branch-info strong {
+        color: #5c67f2;
+    }
+
+    .branch-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-top: 5px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        display: none;
+        z-index: 1000;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .branch-dropdown.show {
+        display: block;
+    }
+
+    .branch-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .branch-item:hover {
+        background-color: #f5f5f5;
+    }
+
+    .branch-item.current {
+        background-color: #e8e8ff;
+        color: #5c67f2;
+    }
+
+    .dropdown-arrow {
+        transition: transform 0.3s ease;
+    }
+
+    .current-branch-info.active .dropdown-arrow {
+        transform: rotate(180deg);
+    }
+
+    .button-group {
+        display: flex;
+        gap: 10px;
+    }
+    .button-group button {
+        flex: 1;
+    }
+    #refresh_button {
+        background-color: #6c757d;
+    }
+    #refresh_button:hover {
+        background-color: #5a6268;
+    }
+
+    .toggle-history {
+        background: none;
+        border: none;
+        color: #5c67f2;
+        cursor: pointer;
+        padding: 2px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s ease;
+        font-size: 12px;
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        margin-left: 5px;
+    }
+
+    .toggle-history:hover {
+        color: #4a54e1;
+    }
+
+    .toggle-history .arrow {
+        display: inline-block;
+        transition: transform 0.3s ease;
+        line-height: 1;
+    }
+
+    .toggle-history.show .arrow {
+        transform: rotate(180deg);
+    }
+</style> 

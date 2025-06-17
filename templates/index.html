@@ -4,268 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Git Commit/Merge Formatter</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .main-container {
-            display: flex;
-            gap: 20px;
-            padding: 20px;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .git-graph {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 40%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .git-graph h2 {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .commit-node {
-            position: relative;
-            padding: 10px;
-            margin: 10px 0;
-            border-left: 3px solid #5c67f2;
-            background-color: #f8f9fa;
-            border-radius: 0 5px 5px 0;
-        }
-
-        .commit-node.current {
-            border-left-color: #28a745;
-            background-color: #e8f5e9;
-        }
-
-        .commit-hash {
-            font-family: monospace;
-            color: #666;
-            font-size: 14px;
-        }
-
-        .commit-message {
-            margin: 5px 0;
-            color: #333;
-        }
-
-        .commit-meta {
-            font-size: 12px;
-            color: #888;
-        }
-
-        .commit-branches {
-            margin-top: 5px;
-        }
-
-        .branch-tag {
-            display: inline-block;
-            padding: 2px 6px;
-            background-color: #e8e8ff;
-            color: #5c67f2;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-right: 5px;
-        }
-
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 60%;
-        }
-
-        h1 {
-            font-size: 24px;
-            color: #333;
-            text-align: center;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .refresh-icon {
-            cursor: pointer;
-            width: 24px;
-            height: 24px;
-            transition: all 0.3s ease;
-            padding: 8px;
-            border-radius: 50%;
-            background-color: #f0f0f0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .refresh-icon:hover {
-            transform: rotate(180deg);
-            background-color: #e0e0e0;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .refresh-icon:active {
-            transform: rotate(180deg) scale(0.95);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        label {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        select, input, textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
-
-        button {
-            background-color: #5c67f2;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #4a54e1;
-        }
-
-        .footer {
-            text-align: center;
-            font-size: 14px;
-            color: #888;
-            margin-top: 20px;
-        }
-
-        .current-branch-info {
-            background-color: #f0f0f0;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .current-branch-info p {
-            margin: 0;
-            color: #333;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .current-branch-info strong {
-            color: #5c67f2;
-        }
-
-        .branch-dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            margin-top: 5px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: none;
-            z-index: 1000;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .branch-dropdown.show {
-            display: block;
-        }
-
-        .branch-item {
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .branch-item:hover {
-            background-color: #f5f5f5;
-        }
-
-        .branch-item.current {
-            background-color: #e8e8ff;
-            color: #5c67f2;
-        }
-
-        .dropdown-arrow {
-            transition: transform 0.3s ease;
-        }
-
-        .current-branch-info.active .dropdown-arrow {
-            transform: rotate(180deg);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-        }
-        .button-group button {
-            flex: 1;
-        }
-        #refresh_button {
-            background-color: #6c757d;
-        }
-        #refresh_button:hover {
-            background-color: #5a6268;
-        }
-    </style>
+    {% include 'components/styles.html' %}
 </head>
 <body>
     <div class="main-container">
-        <div class="git-graph">
-            <h2>Git Commit History</h2>
-            {% for commit in graph_data %}
-            <div class="commit-node {% if commit.branches and current_branch in commit.branches %}current{% endif %}">
-                <div class="commit-hash">{{ commit.hash }}</div>
-                <div class="commit-message">{{ commit.message }}</div>
-                <div class="commit-meta">
-                    {{ commit.author }} - {{ commit.date }}
-                </div>
-                {% if commit.branches %}
-                <div class="commit-branches">
-                    {% for branch in commit.branches %}
-                    <span class="branch-tag">{{ branch }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
+        {% include 'components/git_graph.html' %}
+        
         <div class="container">
             <h1>
                 Git Commit/Merge Formatter
@@ -286,67 +30,7 @@
                 </select>
                 <br><br>
 
-                <!-- Pull 관련 입력 -->
-                <div id="pull_fields" style="display: none;">
-                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
-                        <p>
-                            Current Branch: <strong>{{ current_branch }}</strong>
-                            <span class="dropdown-arrow">▼</span>
-                        </p>
-                        <div class="branch-dropdown">
-                            {% for branch in branches %}
-                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
-                                     onclick="checkoutBranch('{{ branch }}', event)">
-                                    {{ branch }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <br>
-
-                    <label for="pull_branch">Pull Branch:</label>
-                    <select name="pull_branch" id="pull_branch">
-                        {% for branch in branches %}
-                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
-                        {% endfor %}
-                    </select>
-                    <br><br>
-                </div>
-
-                <!-- Commit 관련 입력 -->
-                <div id="commit_fields">
-                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
-                        <p>
-                            Current Branch: <strong>{{ current_branch }}</strong>
-                            <span class="dropdown-arrow">▼</span>
-                        </p>
-                        <div class="branch-dropdown">
-                            {% for branch in branches %}
-                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
-                                     onclick="checkoutBranch('{{ branch }}', event)">
-                                    {{ branch }}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                    <br>
-
-                    <label for="commit_type">Commit Type:</label>
-                    <select name="commit_type" id="commit_type" required>
-                        {% for commit_type in commit_types %}
-                            <option value="{{ commit_type }}">{{ commit_type }}</option>
-                        {% endfor %}
-                    </select>
-                    <br><br>
-
-                    <label for="commit_title">Commit Title:</label>
-                    <input type="text" id="commit_title" name="commit_title" required placeholder="Enter commit title">
-                    <br><br>
-
-                    <label for="commit_description">Commit Description:</label>
-                    <textarea id="commit_description" name="commit_description" placeholder="Enter detailed commit description" required></textarea>
-                    <br><br>
-                </div>
+                {% include 'components/commit_form.html' %}
 
                 <!-- Merge 관련 입력 -->
                 <div id="merge_fields" style="display: none;">
@@ -414,6 +98,33 @@
                     <br><br>
                 </div>
 
+                <!-- Pull 관련 입력 -->
+                <div id="pull_fields" style="display: none;">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="pull_branch">Pull Branch:</label>
+                    <select name="pull_branch" id="pull_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                </div>
+
                 <!-- Push 관련 입력 -->
                 <div id="push_fields" style="display: none;">
                     <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
@@ -452,159 +163,6 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('action_type').addEventListener('change', function() {
-            const commitFields = document.getElementById('commit_fields');
-            const mergeFields = document.getElementById('merge_fields');
-            const branchFields = document.getElementById('branch_fields');
-            const pullFields = document.getElementById('pull_fields');
-            const pushFields = document.getElementById('push_fields');
-            const commitType = document.getElementById('commit_type');
-            const commitTitle = document.getElementById('commit_title');
-            const commitDescription = document.getElementById('commit_description');
-            const sourceBranch = document.getElementById('source_branch');
-            const targetBranch = document.getElementById('target_branch');
-            const newBranchName = document.getElementById('new_branch_name');
-            const baseBranch = document.getElementById('base_branch');
-            const pullBranch = document.getElementById('pull_branch');
-            const pushBranch = document.getElementById('push_branch');
-            const submitButton = document.getElementById('submit_button');
-
-            // 모든 필드 숨기기
-            commitFields.style.display = 'none';
-            mergeFields.style.display = 'none';
-            branchFields.style.display = 'none';
-            pullFields.style.display = 'none';
-            pushFields.style.display = 'none';
-
-            // 선택된 액션에 따라 필드 표시
-            if (this.value === 'merge') {
-                mergeFields.style.display = 'block';
-                commitType.removeAttribute('required');
-                commitTitle.removeAttribute('required');
-                commitDescription.removeAttribute('required');
-                sourceBranch.setAttribute('required', '');
-                targetBranch.setAttribute('required', '');
-                newBranchName.removeAttribute('required');
-                baseBranch.removeAttribute('required');
-                pullBranch.removeAttribute('required');
-                submitButton.textContent = 'Merge';
-            } else if (this.value === 'branch') {
-                branchFields.style.display = 'block';
-                commitType.removeAttribute('required');
-                commitTitle.removeAttribute('required');
-                commitDescription.removeAttribute('required');
-                sourceBranch.removeAttribute('required');
-                targetBranch.removeAttribute('required');
-                newBranchName.setAttribute('required', '');
-                baseBranch.setAttribute('required', '');
-                pullBranch.removeAttribute('required');
-                submitButton.textContent = 'Create Branch';
-            } else if (this.value === 'pull') {
-                pullFields.style.display = 'block';
-                commitType.removeAttribute('required');
-                commitTitle.removeAttribute('required');
-                commitDescription.removeAttribute('required');
-                sourceBranch.removeAttribute('required');
-                targetBranch.removeAttribute('required');
-                newBranchName.removeAttribute('required');
-                baseBranch.removeAttribute('required');
-                pullBranch.setAttribute('required', '');
-                pushBranch.removeAttribute('required');
-                submitButton.textContent = 'Pull';
-            } else if (this.value === 'push') {
-                pushFields.style.display = 'block';
-                commitType.removeAttribute('required');
-                commitTitle.removeAttribute('required');
-                commitDescription.removeAttribute('required');
-                sourceBranch.removeAttribute('required');
-                targetBranch.removeAttribute('required');
-                newBranchName.removeAttribute('required');
-                baseBranch.removeAttribute('required');
-                pullBranch.removeAttribute('required');
-                pushBranch.setAttribute('required', '');
-                submitButton.textContent = 'Push';
-            } else {
-                commitFields.style.display = 'block';
-                commitType.setAttribute('required', '');
-                commitTitle.setAttribute('required', '');
-                commitDescription.setAttribute('required', '');
-                sourceBranch.removeAttribute('required');
-                targetBranch.removeAttribute('required');
-                newBranchName.removeAttribute('required');
-                baseBranch.removeAttribute('required');
-                pullBranch.removeAttribute('required');
-                submitButton.textContent = 'Commit';
-            }
-        });
-
-        // 소스 브랜치와 타겟 브랜치가 같은 경우를 방지
-        document.getElementById('source_branch').addEventListener('change', function() {
-            const targetBranch = document.getElementById('target_branch');
-            if (this.value === targetBranch.value) {
-                alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
-                this.value = '';
-            }
-        });
-
-        document.getElementById('target_branch').addEventListener('change', function() {
-            const sourceBranch = document.getElementById('source_branch');
-            if (this.value === sourceBranch.value) {
-                alert('소스 브랜치와 타겟 브랜치는 서로 달라야 합니다.');
-                this.value = '';
-            }
-        });
-
-        function toggleBranchDropdown(element) {
-            const dropdown = element.querySelector('.branch-dropdown');
-            const isActive = element.classList.contains('active');
-            
-            // 다른 모든 드롭다운 닫기
-            document.querySelectorAll('.branch-dropdown.show').forEach(d => {
-                if (d !== dropdown) {
-                    d.classList.remove('show');
-                    d.parentElement.classList.remove('active');
-                }
-            });
-
-            // 현재 드롭다운 토글
-            dropdown.classList.toggle('show');
-            element.classList.toggle('active');
-        }
-
-        function checkoutBranch(branch, event) {
-            event.stopPropagation();
-            if (branch === '{{ current_branch }}') return;
-
-            fetch('/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ branch: branch })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert('브랜치 전환 중 오류가 발생했습니다: ' + data.error);
-                }
-            })
-            .catch(error => {
-                alert('브랜치 전환 중 오류가 발생했습니다: ' + error);
-            });
-        }
-
-        // 드롭다운 외부 클릭 시 닫기
-        document.addEventListener('click', function(event) {
-            if (!event.target.closest('.current-branch-info')) {
-                document.querySelectorAll('.branch-dropdown.show').forEach(dropdown => {
-                    dropdown.classList.remove('show');
-                    dropdown.parentElement.classList.remove('active');
-                });
-            }
-        });
-    </script>
+    {% include 'components/scripts.html' %}
 </body>
 </html>

@@ -1,0 +1,33 @@
+<div id="commit_fields">
+    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+        <p>
+            Current Branch: <strong>{{ current_branch }}</strong>
+            <span class="dropdown-arrow">▼</span>
+        </p>
+        <div class="branch-dropdown">
+            {% for branch in branches %}
+                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                     onclick="checkoutBranch('{{ branch }}', event)">
+                    {{ branch }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+
+    <label for="commit_type">Commit Type:</label>
+    <select name="commit_type" id="commit_type" required>
+        {% for commit_type in commit_types %}
+            <option value="{{ commit_type }}">{{ commit_type }}</option>
+        {% endfor %}
+    </select>
+    <br><br>
+
+    <label for="commit_title">Commit Title:</label>
+    <input type="text" id="commit_title" name="commit_title" required placeholder="Enter commit title">
+    <br><br>
+
+    <label for="commit_description">Commit Description:</label>
+    <textarea id="commit_description" name="commit_description" placeholder="Enter detailed commit description" required></textarea>
+    <br><br>
+</div> 

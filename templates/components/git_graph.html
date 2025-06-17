@@ -1,0 +1,24 @@
+<div class="git-graph">
+    <h2>
+        Git Commit History
+        <button class="toggle-history" onclick="toggleHistory()">
+            <span class="arrow">▶</span>
+        </button>
+    </h2>
+    {% for commit in graph_data %}
+    <div class="commit-node {% if commit.branches and current_branch in commit.branches %}current{% endif %}">
+        <div class="commit-hash">{{ commit.hash }}</div>
+        <div class="commit-message">{{ commit.message }}</div>
+        <div class="commit-meta">
+            {{ commit.author }} - {{ commit.date }}
+        </div>
+        {% if commit.branches %}
+        <div class="commit-branches">
+            {% for branch in commit.branches %}
+            <span class="branch-tag">{{ branch }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div> 
