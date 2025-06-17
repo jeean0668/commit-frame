@@ -13,7 +13,76 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .git-graph {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 40%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .git-graph h2 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .commit-node {
+            position: relative;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #5c67f2;
+            background-color: #f8f9fa;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .commit-node.current {
+            border-left-color: #28a745;
+            background-color: #e8f5e9;
+        }
+
+        .commit-hash {
+            font-family: monospace;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .commit-message {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .commit-meta {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .commit-branches {
+            margin-top: 5px;
+        }
+
+        .branch-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            background-color: #e8e8ff;
+            color: #5c67f2;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
         }
 
         .container {
@@ -21,8 +90,7 @@
             padding: 30px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 500px;
+            width: 60%;
         }
 
         h1 {
@@ -178,99 +246,209 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>
-            Git Commit/Merge Formatter
-            <svg class="refresh-icon" onclick="location.reload()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M23 4v6h-6"></path>
-                <path d="M1 20v-6h6"></path>
-                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
-            </svg>
-        </h1>
-        <form action="/commit" method="POST">
-            <label for="action_type">Select Action:</label>
-            <select name="action_type" id="action_type" required>
-                <option value="commit">Commit</option>
-                <option value="merge">Merge</option>
-            </select>
-            <br><br>
-
-            <!-- Commit 관련 입력 -->
-            <div id="commit_fields">
-                <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
-                    <p>
-                        현재 브랜치: <strong>{{ current_branch }}</strong>
-                        <span class="dropdown-arrow">▼</span>
-                    </p>
-                    <div class="branch-dropdown">
-                        {% for branch in branches %}
-                            <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
-                                 onclick="checkoutBranch('{{ branch }}', event)">
-                                {{ branch }}
-                            </div>
-                        {% endfor %}
-                    </div>
+    <div class="main-container">
+        <div class="git-graph">
+            <h2>Git Commit History</h2>
+            {% for commit in graph_data %}
+            <div class="commit-node {% if commit.branches and current_branch in commit.branches %}current{% endif %}">
+                <div class="commit-hash">{{ commit.hash }}</div>
+                <div class="commit-message">{{ commit.message }}</div>
+                <div class="commit-meta">
+                    {{ commit.author }} - {{ commit.date }}
                 </div>
-                <br>
-
-                <label for="commit_type">Commit Type:</label>
-                <select name="commit_type" id="commit_type" required>
-                    {% for commit_type in commit_types %}
-                        <option value="{{ commit_type }}">{{ commit_type }}</option>
+                {% if commit.branches %}
+                <div class="commit-branches">
+                    {% for branch in commit.branches %}
+                    <span class="branch-tag">{{ branch }}</span>
                     {% endfor %}
-                </select>
-                <br><br>
-
-                <label for="commit_title">Commit Title:</label>
-                <input type="text" id="commit_title" name="commit_title" required placeholder="Enter commit title">
-                <br><br>
-
-                <label for="commit_description">Commit Description:</label>
-                <textarea id="commit_description" name="commit_description" placeholder="Enter detailed commit description" required></textarea>
-                <br><br>
-            </div>
-
-            <!-- Merge 관련 입력 -->
-            <div id="merge_fields" style="display: none;">
-                <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
-                    <p>
-                        현재 브랜치: <strong>{{ current_branch }}</strong>
-                        <span class="dropdown-arrow">▼</span>
-                    </p>
-                    <div class="branch-dropdown">
-                        {% for branch in branches %}
-                            <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
-                                 onclick="checkoutBranch('{{ branch }}', event)">
-                                {{ branch }}
-                            </div>
-                        {% endfor %}
-                    </div>
                 </div>
-                <br>
-
-                <label for="source_branch">Source Branch:</label>
-                <select name="source_branch" id="source_branch">
-                    {% for branch in branches %}
-                        <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
-                    {% endfor %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="container">
+            <h1>
+                Git Commit/Merge Formatter
+                <svg class="refresh-icon" onclick="location.reload()" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 4v6h-6"></path>
+                    <path d="M1 20v-6h6"></path>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+            </h1>
+            <form action="/commit" method="POST">
+                <label for="action_type">Select Action:</label>
+                <select name="action_type" id="action_type" required>
+                    <option value="commit">Commit</option>
+                    <option value="merge">Merge</option>
+                    <option value="branch">Create Branch</option>
+                    <option value="pull">Pull</option>
+                    <option value="push">Push</option>
                 </select>
                 <br><br>
 
-                <label for="target_branch">Target Branch:</label>
-                <select name="target_branch" id="target_branch">
-                    {% for branch in branches %}
-                        <option value="{{ branch }}">{{ branch }}</option>
-                    {% endfor %}
-                </select>
-                <br><br>
-            </div>
+                <!-- Pull 관련 입력 -->
+                <div id="pull_fields" style="display: none;">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
 
-            <div class="button-group">
-                <button type="submit" id="submit_button">Execute</button>
+                    <label for="pull_branch">Pull Branch:</label>
+                    <select name="pull_branch" id="pull_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                </div>
+
+                <!-- Commit 관련 입력 -->
+                <div id="commit_fields">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="commit_type">Commit Type:</label>
+                    <select name="commit_type" id="commit_type" required>
+                        {% for commit_type in commit_types %}
+                            <option value="{{ commit_type }}">{{ commit_type }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="commit_title">Commit Title:</label>
+                    <input type="text" id="commit_title" name="commit_title" required placeholder="Enter commit title">
+                    <br><br>
+
+                    <label for="commit_description">Commit Description:</label>
+                    <textarea id="commit_description" name="commit_description" placeholder="Enter detailed commit description" required></textarea>
+                    <br><br>
+                </div>
+
+                <!-- Merge 관련 입력 -->
+                <div id="merge_fields" style="display: none;">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="source_branch">Source Branch:</label>
+                    <select name="source_branch" id="source_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+
+                    <label for="target_branch">Target Branch:</label>
+                    <select name="target_branch" id="target_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}">{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                </div>
+
+                <!-- Branch 생성 관련 입력 -->
+                <div id="branch_fields" style="display: none;">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="new_branch_name">New Branch Name:</label>
+                    <input type="text" id="new_branch_name" name="new_branch_name" placeholder="Enter new branch name">
+                    <br><br>
+
+                    <label for="base_branch">Base Branch:</label>
+                    <select name="base_branch" id="base_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                </div>
+
+                <!-- Push 관련 입력 -->
+                <div id="push_fields" style="display: none;">
+                    <div class="current-branch-info" onclick="toggleBranchDropdown(this)">
+                        <p>
+                            Current Branch: <strong>{{ current_branch }}</strong>
+                            <span class="dropdown-arrow">▼</span>
+                        </p>
+                        <div class="branch-dropdown">
+                            {% for branch in branches %}
+                                <div class="branch-item {% if branch == current_branch %}current{% endif %}" 
+                                     onclick="checkoutBranch('{{ branch }}', event)">
+                                    {{ branch }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <br>
+
+                    <label for="push_branch">Push Branch:</label>
+                    <select name="push_branch" id="push_branch">
+                        {% for branch in branches %}
+                            <option value="{{ branch }}" {% if branch == current_branch %}selected{% endif %}>{{ branch }}</option>
+                        {% endfor %}
+                    </select>
+                    <br><br>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="submit_button">Execute</button>
+                </div>
+            </form>
+            <div class="footer">
+                <p>Powered by Toothy - Git Commit/Merge Formatter</p>
+                <p>Contact: <a href="mailto:business@kklim.io">business@kklim.io</a></p>
             </div>
-        </form>
-        <div class="footer">
-            <p>Powered by Toothy - Git Commit/Merge Formatter</p>
         </div>
     </div>
 
@@ -278,30 +456,84 @@
         document.getElementById('action_type').addEventListener('change', function() {
             const commitFields = document.getElementById('commit_fields');
             const mergeFields = document.getElementById('merge_fields');
+            const branchFields = document.getElementById('branch_fields');
+            const pullFields = document.getElementById('pull_fields');
+            const pushFields = document.getElementById('push_fields');
             const commitType = document.getElementById('commit_type');
             const commitTitle = document.getElementById('commit_title');
             const commitDescription = document.getElementById('commit_description');
             const sourceBranch = document.getElementById('source_branch');
             const targetBranch = document.getElementById('target_branch');
+            const newBranchName = document.getElementById('new_branch_name');
+            const baseBranch = document.getElementById('base_branch');
+            const pullBranch = document.getElementById('pull_branch');
+            const pushBranch = document.getElementById('push_branch');
             const submitButton = document.getElementById('submit_button');
 
+            // 모든 필드 숨기기
+            commitFields.style.display = 'none';
+            mergeFields.style.display = 'none';
+            branchFields.style.display = 'none';
+            pullFields.style.display = 'none';
+            pushFields.style.display = 'none';
+
+            // 선택된 액션에 따라 필드 표시
             if (this.value === 'merge') {
-                commitFields.style.display = 'none';
                 mergeFields.style.display = 'block';
                 commitType.removeAttribute('required');
                 commitTitle.removeAttribute('required');
                 commitDescription.removeAttribute('required');
                 sourceBranch.setAttribute('required', '');
                 targetBranch.setAttribute('required', '');
+                newBranchName.removeAttribute('required');
+                baseBranch.removeAttribute('required');
+                pullBranch.removeAttribute('required');
                 submitButton.textContent = 'Merge';
+            } else if (this.value === 'branch') {
+                branchFields.style.display = 'block';
+                commitType.removeAttribute('required');
+                commitTitle.removeAttribute('required');
+                commitDescription.removeAttribute('required');
+                sourceBranch.removeAttribute('required');
+                targetBranch.removeAttribute('required');
+                newBranchName.setAttribute('required', '');
+                baseBranch.setAttribute('required', '');
+                pullBranch.removeAttribute('required');
+                submitButton.textContent = 'Create Branch';
+            } else if (this.value === 'pull') {
+                pullFields.style.display = 'block';
+                commitType.removeAttribute('required');
+                commitTitle.removeAttribute('required');
+                commitDescription.removeAttribute('required');
+                sourceBranch.removeAttribute('required');
+                targetBranch.removeAttribute('required');
+                newBranchName.removeAttribute('required');
+                baseBranch.removeAttribute('required');
+                pullBranch.setAttribute('required', '');
+                pushBranch.removeAttribute('required');
+                submitButton.textContent = 'Pull';
+            } else if (this.value === 'push') {
+                pushFields.style.display = 'block';
+                commitType.removeAttribute('required');
+                commitTitle.removeAttribute('required');
+                commitDescription.removeAttribute('required');
+                sourceBranch.removeAttribute('required');
+                targetBranch.removeAttribute('required');
+                newBranchName.removeAttribute('required');
+                baseBranch.removeAttribute('required');
+                pullBranch.removeAttribute('required');
+                pushBranch.setAttribute('required', '');
+                submitButton.textContent = 'Push';
             } else {
                 commitFields.style.display = 'block';
-                mergeFields.style.display = 'none';
                 commitType.setAttribute('required', '');
                 commitTitle.setAttribute('required', '');
                 commitDescription.setAttribute('required', '');
                 sourceBranch.removeAttribute('required');
                 targetBranch.removeAttribute('required');
+                newBranchName.removeAttribute('required');
+                baseBranch.removeAttribute('required');
+                pullBranch.removeAttribute('required');
                 submitButton.textContent = 'Commit';
             }
         });
