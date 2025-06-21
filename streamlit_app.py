@@ -103,7 +103,8 @@ def main():
     try:
         repo = git.Repo(repo_path)
         branches = [b.name for b in repo.branches]
-        current_branch = repo.active_branch.name
+        current_branch_obj = repo.active_branch
+        current_branch = current_branch_obj.name
     except git.InvalidGitRepositoryError:
         st.error("This is not a Git repository. Please run this tool in a valid Git repository.")
         return
@@ -115,25 +116,91 @@ def main():
     st.sidebar.header("Actions")
     action_type = st.sidebar.selectbox(
         "Select Action",
-        ["Commit", "Merge", "Create Branch", "Pull", "Push", "Checkout Branch"]
+        ["Git History", "Commit", "Merge", "Create Branch", "Pull", "Push", "Checkout Branch"]
     )
     st.sidebar.markdown("---")
     st.sidebar.header("Current Status")
     st.sidebar.info(f"**Current Branch:** `{current_branch}`")
-    
-    # Git Graph
-    st.markdown("## Git Graph")
-    commit_data, refs = get_git_graph_data()
-    if commit_data:
-        render_git_graph(commit_data, refs)
-    else:
-        st.info("No commits in the repository yet.")
 
+    # Local and remote branch status
+    local_commit = current_branch_obj.commit
+    st.sidebar.markdown(f"**Local HEAD:** `{local_commit.hexsha[:7]}`")
+
+    remote_status_text = "No tracking remote branch."
+    tracking_branch = current_branch_obj.tracking_branch()
+    if tracking_branch:
+        try:
+            remote_commit = tracking_branch.commit
+            if local_commit.hexsha == remote_commit.hexsha:
+                remote_status_text = f"Up to date with `{tracking_branch.name}`."
+            else:
+                ahead_count = sum(1 for _ in repo.iter_commits(f'{tracking_branch.name}..{current_branch_obj.name}'))
+                behind_count = sum(1 for _ in repo.iter_commits(f'{current_branch_obj.name}..{tracking_branch.name}'))
+                
+                status_parts = []
+                if ahead_count > 0:
+                    status_parts.append(f"{ahead_count} ahead")
+                if behind_count > 0:
+                    status_parts.append(f"{behind_count} behind")
+
+                if status_parts:
+                    remote_status_text = f"[{', '.join(status_parts)}] of `{tracking_branch.name}`"
+                else: # Diverged or other state
+                    remote_status_text = f"Diverged from `{tracking_branch.name}`"
+
+        except Exception:
+            remote_status_text = f"Could not get status for `{tracking_branch.name}`."
+    st.sidebar.markdown(f"**Remote Status:** {remote_status_text}")
+    
     # Main action handling
     st.markdown("---")
     st.header(f"Action: {action_type}")
 
-    if action_type == "Commit":
+    if action_type == "Git History":
+        st.markdown("## Git Graph")
+        commit_data, refs = get_git_graph_data()
+        if commit_data:
+            render_git_graph(commit_data, refs)
+
+            st.markdown("---")
+            st.markdown("### Commit Details")
+            st.info("Click on a commit to see its body.")
+
+            # Create a reverse mapping from sha to a list of ref names
+            sha_to_refs = {}
+            for ref_name, ref_info in refs.items():
+                sha = ref_info['sha']
+                if sha not in sha_to_refs:
+                    sha_to_refs[sha] = []
+                sha_to_refs[sha].append(ref_name)
+            
+            for commit in commit_data:
+                # Build the summary string for the expander title
+                summary_parts = []
+                commit_refs = sha_to_refs.get(commit['sha'], [])
+                if commit_refs:
+                    summary_parts.append(f"📍 {', '.join(commit_refs)}")
+                
+                summary_parts.append(f"👤 {commit['author']}")
+                summary_parts.append(f"📅 {commit['date']}")
+                
+                summary_str = f"({'; '.join(summary_parts)})"
+                expander_title = f"{commit['short_sha']} - {commit['message']} {summary_str}"
+
+                with st.expander(expander_title):
+                    st.markdown(f"**Author:** {commit['author']}")
+                    st.markdown(f"**Date:** {commit['date']}")
+                    st.markdown(f"**SHA:** {commit['sha']}")
+                    st.markdown(f"**Refs:** `{', '.join(commit_refs)}`" if commit_refs else "_No refs pointing to this commit._")
+                    st.markdown("**Body:**")
+                    if commit.get('body'):
+                        st.code(commit['body'], language='text')
+                    else:
+                        st.markdown("_This commit has no body._")
+        else:
+            st.info("No commits in the repository yet.")
+
+    elif action_type == "Commit":
         st.subheader("Create a new commit")
         commit_type = st.selectbox("Commit Type", commit_types)
         commit_title = st.text_input("Commit Title")

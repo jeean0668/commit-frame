@@ -172,10 +172,18 @@ def get_git_graph_data():
         
         commit_data = []
         for commit in commits:
+            message = commit.message
+            parts = message.split('\n', 2)
+            title = parts[0]
+            body = ""
+            if len(parts) > 2 and parts[2].startswith('<body>: '):
+                body = parts[2][len('<body>: '):]
+
             commit_data.append({
                 'sha': commit.hexsha,
                 'short_sha': commit.hexsha[:7],
-                'message': commit.message.split('\n')[0],
+                'message': title,
+                'body': body,
                 'author': commit.author.name,
                 'date': commit.committed_datetime.strftime('%Y-%m-%d %H:%M'),
                 'parents': [p.hexsha for p in commit.parents]
