@@ -92,13 +92,8 @@ def main():
         st.error(st.session_state.error_message)
         st.session_state.error_message = None
 
-    # Title and Refresh Button
-    col1, col2, _ = st.columns([0.5, 0.1, 0.4])
-    with col1:
-        st.title("Git Commit/Merge Formatter")
-    with col2:
-        if st.button("🔄", help="Refresh the app state"):
-            st.rerun()
+    # Title
+    st.title("Git Commit/Merge Formatter")
 
     try:
         repo = git.Repo(repo_path)
@@ -120,6 +115,11 @@ def main():
     )
     st.sidebar.markdown("---")
     st.sidebar.header("Current Status")
+    
+    # Refresh button in Current Status section
+    if st.sidebar.button("🔄 Refresh Status", help="Refresh the app state"):
+        st.rerun()
+    
     st.sidebar.info(f"**Current Branch:** `{current_branch}`")
 
     # Local and remote branch status

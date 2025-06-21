@@ -8,8 +8,47 @@
   -->
 </div>
 
-<div id="english-content" style="display:none;">
+<div id="english-content">
 A powerful Git repository management tool that helps developers create standardized commit messages and manage branches efficiently. Built with Streamlit for a modern web interface, this tool streamlines your Git workflow with structured commit templates and comprehensive branch management capabilities.
+
+## Usage
+
+![Program Usage](image.png)
+
+### Available Operations
+
+1. **Git History**: Visualize commit history with interactive graphs
+2. **Commit**: Create standardized commit messages with structured templates
+3. **Merge**: Safely merge branches with conflict detection
+4. **Create Branch**: Create new branches from existing ones
+5. **Pull**: Synchronize with remote repository
+6. **Push**: Upload local changes to remote repository
+7. **Checkout Branch**: Switch between branches seamlessly
+
+### Commit Message Format
+The tool generates commit messages in the following structured format:
+```
+<type>: <title>
+<title>: <title>
+<body>: <description>
+```
+
+**Supported Commit Types:**
+- `feat`: New features
+- `fix`: Bug fixes
+- `docs`: Documentation changes
+- `style`: Code formatting and style changes
+- `refactor`: Code refactoring
+- `test`: Test additions or modifications
+- `chore`: Build process or auxiliary tool changes
+- `build`: Build system or external dependency changes
+
+### Why Standardized Commits?
+- **Better Git History**: Easier to understand project evolution
+- **Automated Changelog**: Generate release notes automatically
+- **Team Consistency**: Uniform commit messages across the team
+- **Semantic Versioning**: Support for semantic versioning workflows
+- **Issue Tracking**: Better integration with issue tracking systems
 
 ## Key Features
 
@@ -105,43 +144,6 @@ streamlit run streamlit_app.py
 - Modern, intuitive interface for Git operations
 - Real-time Git status monitoring
 
-## Usage
-
-### Available Operations
-
-1. **Git History**: Visualize commit history with interactive graphs
-2. **Commit**: Create standardized commit messages with structured templates
-3. **Merge**: Safely merge branches with conflict detection
-4. **Create Branch**: Create new branches from existing ones
-5. **Pull**: Synchronize with remote repository
-6. **Push**: Upload local changes to remote repository
-7. **Checkout Branch**: Switch between branches seamlessly
-
-### Commit Message Format
-The tool generates commit messages in the following structured format:
-```
-<type>: <title>
-<title>: <title>
-<body>: <description>
-```
-
-**Supported Commit Types:**
-- `feat`: New features
-- `fix`: Bug fixes
-- `docs`: Documentation changes
-- `style`: Code formatting and style changes
-- `refactor`: Code refactoring
-- `test`: Test additions or modifications
-- `chore`: Build process or auxiliary tool changes
-- `build`: Build system or external dependency changes
-
-### Why Standardized Commits?
-- **Better Git History**: Easier to understand project evolution
-- **Automated Changelog**: Generate release notes automatically
-- **Team Consistency**: Uniform commit messages across the team
-- **Semantic Versioning**: Support for semantic versioning workflows
-- **Issue Tracking**: Better integration with issue tracking systems
-
 ## Important Notes
 
 - **Git Repository Required**: This tool must be run in an initialized Git repository
@@ -187,10 +189,48 @@ The tool generates commit messages in the following structured format:
 
 This project is distributed under the MIT License.
 </div>
-</details>
 
 <div id="korean-content" style="display: none;">
 Git 저장소 관리를 위한 웹 기반 도구로, Streamlit을 사용한 현대적이고 직관적인 인터페이스를 제공합니다. 정형화된 커밋 메시지 생성, 브랜치 관리, Git 히스토리 시각화 등의 기능을 제공합니다.
+
+## 사용법
+
+![Program Usage](image.png)
+
+### 사용 가능한 작업
+
+1. **Git History**: 인터랙티브 그래프로 커밋 히스토리 시각화
+2. **Commit**: 구조화된 템플릿으로 정형화된 커밋 메시지 생성
+3. **Merge**: 충돌 감지와 함께 안전하게 브랜치 머지
+4. **Create Branch**: 기존 브랜치에서 새 브랜치 생성
+5. **Pull**: 원격 저장소와 동기화
+6. **Push**: 로컬 변경사항을 원격 저장소에 업로드
+7. **Checkout Branch**: 브랜치 간 원활한 전환
+
+### 커밋 메시지 형식
+도구는 다음 구조화된 형식으로 커밋 메시지를 생성합니다:
+```
+<type>: <title>
+<title>: <title>
+<body>: <description>
+```
+
+**지원하는 커밋 타입:**
+- `feat`: 새로운 기능
+- `fix`: 버그 수정
+- `docs`: 문서 변경
+- `style`: 코드 포맷팅 및 스타일 변경
+- `refactor`: 코드 리팩토링
+- `test`: 테스트 추가 또는 수정
+- `chore`: 빌드 프로세스 또는 보조 도구 변경
+- `build`: 빌드 시스템 또는 외부 종속성 변경
+
+### 정형화된 커밋의 장점
+- **더 나은 Git 히스토리**: 프로젝트 진화를 더 쉽게 이해
+- **자동화된 변경 로그**: 릴리스 노트 자동 생성
+- **팀 일관성**: 팀 전체의 균일한 커밋 메시지
+- **시맨틱 버저닝**: 시맨틱 버저닝 워크플로우 지원
+- **이슈 트래킹**: 이슈 트래킹 시스템과의 더 나은 통합
 
 ## 주요 기능
 
@@ -286,43 +326,6 @@ streamlit run streamlit_app.py
 - Git 작업을 위한 현대적이고 직관적인 인터페이스
 - 실시간 Git 상태 모니터링
 
-## 사용법
-
-### 사용 가능한 작업
-
-1. **Git History**: 인터랙티브 그래프로 커밋 히스토리 시각화
-2. **Commit**: 구조화된 템플릿으로 정형화된 커밋 메시지 생성
-3. **Merge**: 충돌 감지와 함께 안전하게 브랜치 머지
-4. **Create Branch**: 기존 브랜치에서 새 브랜치 생성
-5. **Pull**: 원격 저장소와 동기화
-6. **Push**: 로컬 변경사항을 원격 저장소에 업로드
-7. **Checkout Branch**: 브랜치 간 원활한 전환
-
-### 커밋 메시지 형식
-도구는 다음 구조화된 형식으로 커밋 메시지를 생성합니다:
-```
-<type>: <title>
-<title>: <title>
-<body>: <description>
-```
-
-**지원하는 커밋 타입:**
-- `feat`: 새로운 기능
-- `fix`: 버그 수정
-- `docs`: 문서 변경
-- `style`: 코드 포맷팅 및 스타일 변경
-- `refactor`: 코드 리팩토링
-- `test`: 테스트 추가 또는 수정
-- `chore`: 빌드 프로세스 또는 보조 도구 변경
-- `build`: 빌드 시스템 또는 외부 종속성 변경
-
-### 정형화된 커밋의 장점
-- **더 나은 Git 히스토리**: 프로젝트 진화를 더 쉽게 이해
-- **자동화된 변경 로그**: 릴리스 노트 자동 생성
-- **팀 일관성**: 팀 전체의 균일한 커밋 메시지
-- **시맨틱 버저닝**: 시맨틱 버저닝 워크플로우 지원
-- **이슈 트래킹**: 이슈 트래킹 시스템과의 더 나은 통합
-
 ## 주의사항
 
 - **Git 저장소 필수**: 이 도구는 초기화된 Git 저장소에서 실행해야 합니다
@@ -369,190 +372,6 @@ streamlit run streamlit_app.py
 이 프로젝트는 MIT 라이선스 하에 배포됩니다.
 </div>
 
-<details>
-<summary>English</summary>
-
-<div id="english-content" style="display:none;">
-A powerful Git repository management tool that helps developers create standardized commit messages and manage branches efficiently. Built with Streamlit for a modern web interface, this tool streamlines your Git workflow with structured commit templates and comprehensive branch management capabilities.
-
-## Key Features
-
-### 📝 Standardized Commit Messages
-- **Conventional Commit Format**: Follow industry standards with predefined commit types (feat, fix, docs, style, refactor, test, chore, build)
-- **Structured Templates**: Automatically format commit messages with title, body, and type sections
-- **Consistent History**: Maintain clean and readable Git history across your team
-- **Easy Customization**: Modify commit types and templates to match your project's conventions
-
-### 🌿 Advanced Branch Management
-- **Seamless Branch Operations**: Create, checkout, and merge branches with a few clicks
-- **Visual Branch Status**: Real-time display of current branch, remote status, and commit differences
-- **Safe Merge Operations**: Merge branches with conflict detection and resolution guidance
-- **Remote Synchronization**: Pull and push changes with clear status feedback
-
-### 📊 Git History Visualization
-- **Interactive Git Graph**: Visualize commit history with Graphviz-powered diagrams
-- **Commit Details**: View comprehensive commit information including author, date, and full message body
-- **Branch and Tag Display**: See all references pointing to each commit
-- **Real-time Updates**: Refresh and see the latest changes instantly
-
-### 🎯 Modern Web Interface
-- **Intuitive Design**: Clean and responsive Streamlit interface
-- **Sidebar Navigation**: Quick access to all Git operations
-- **Real-time Status**: Live updates of repository state
-- **Cross-platform**: Works on macOS, Linux, and Windows
-
-## Requirements
-
-- Python 3.7 or higher
-- Git
-- macOS/Linux/Windows support
-
-## Installation & Execution
-
-### 1. Copy Project Files
-Copy the following files to your target Git repository:
-
-**Required Files:**
-- `streamlit_app.py` - Main Streamlit application
-- `git_utils.py` - Git utility functions
-- `requirements.txt` - Python dependencies
-
-**Copy Methods:**
-```bash
-# Method 1: Copy files directly
-cp streamlit_app.py /path/to/your/git/repository/
-cp git_utils.py /path/to/your/git/repository/
-cp requirements.txt /path/to/your/git/repository/
-
-# Method 2: Copy entire project and extract needed files
-cp -r commit-frame /path/to/your/git/repository/
-cd /path/to/your/git/repository/commit-frame
-# Move required files to parent directory
-```
-
-### 2. Clone Repository (if working from original repo)
-```bash
-git clone [repository-url]
-cd commit-frame
-```
-
-### 3. Create and Activate Virtual Environment
-
-**macOS/Linux:**
-```bash
-# Create virtual environment
-python3 -m venv venv
-
-# Activate virtual environment
-source venv/bin/activate
-```
-
-**Windows:**
-```bash
-# Create virtual environment
-python -m venv venv
-
-# Activate virtual environment
-.\venv\Scripts\activate
-```
-
-### 4. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 5. Run the Application
-```bash
-streamlit run streamlit_app.py
-```
-- Automatically opens in your browser at `http://localhost:8501`
-- Modern, intuitive interface for Git operations
-- Real-time Git status monitoring
-
-## Usage
-
-### Available Operations
-
-1. **Git History**: Visualize commit history with interactive graphs
-2. **Commit**: Create standardized commit messages with structured templates
-3. **Merge**: Safely merge branches with conflict detection
-4. **Create Branch**: Create new branches from existing ones
-5. **Pull**: Synchronize with remote repository
-6. **Push**: Upload local changes to remote repository
-7. **Checkout Branch**: Switch between branches seamlessly
-
-### Commit Message Format
-The tool generates commit messages in the following structured format:
-```
-<type>: <title>
-<title>: <title>
-<body>: <description>
-```
-
-**Supported Commit Types:**
-- `feat`: New features
-- `fix`: Bug fixes
-- `docs`: Documentation changes
-- `style`: Code formatting and style changes
-- `refactor`: Code refactoring
-- `test`: Test additions or modifications
-- `chore`: Build process or auxiliary tool changes
-- `build`: Build system or external dependency changes
-
-### Why Standardized Commits?
-- **Better Git History**: Easier to understand project evolution
-- **Automated Changelog**: Generate release notes automatically
-- **Team Consistency**: Uniform commit messages across the team
-- **Semantic Versioning**: Support for semantic versioning workflows
-- **Issue Tracking**: Better integration with issue tracking systems
-
-## Important Notes
-
-- **Git Repository Required**: This tool must be run in an initialized Git repository
-- **Git Configuration**: Ensure Git user information is properly configured
-- **Permissions**: Verify appropriate permissions for remote repository operations
-- **Conflict Resolution**: Be prepared to resolve merge conflicts when they occur
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"Not a Git repository" Error**
-   - Verify current directory is a Git repository
-   - Run `git init` to initialize a new repository
-
-2. **Package Installation Errors**
-   - Ensure virtual environment is activated
-   - Run `pip install --upgrade pip` before retrying
-
-3. **Graphviz-related Issues**
-   - If graphs don't display: `pip install graphviz`
-   - System Graphviz installation required (macOS: `brew install graphviz`, Ubuntu: `sudo apt-get install graphviz`)
-
-4. **Permission Errors**
-   - Configure Git user info: `git config --global user.name "Your Name"`, `git config --global user.email "your.email@example.com"`
-   - Verify SSH keys or personal access tokens for remote access
-
-## Benefits
-
-### For Individual Developers
-- **Faster Workflow**: Create commits and manage branches without command line
-- **Consistent Quality**: Never forget commit message structure
-- **Visual Feedback**: See repository state at a glance
-- **Error Prevention**: Built-in validation and conflict detection
-
-### For Teams
-- **Standardized Process**: Everyone follows the same commit conventions
-- **Better Collaboration**: Clear commit history improves code review
-- **Automated Workflows**: Structured commits enable CI/CD integration
-- **Reduced Conflicts**: Better merge strategies and conflict resolution
-
-## License
-
-This project is distributed under the MIT License.
-</div>
-</details>
-
 <script>
 function toggleLanguage() {
     const englishContent = document.getElementById('english-content');
@@ -576,7 +395,15 @@ function toggleLanguage() {
 document.addEventListener('DOMContentLoaded', function() {
     const userLang = navigator.language || navigator.userLanguage;
     if (userLang.startsWith('ko')) {
-        toggleLanguage(); // Switch to Korean if browser language is Korean
+        // Start with Korean content visible
+        document.getElementById('english-content').style.display = 'none';
+        document.getElementById('korean-content').style.display = 'block';
+        document.getElementById('langBtn').textContent = 'English';
+    } else {
+        // Start with English content visible
+        document.getElementById('english-content').style.display = 'block';
+        document.getElementById('korean-content').style.display = 'none';
+        document.getElementById('langBtn').textContent = '한국어';
     }
 });
 </script>
