@@ -13,47 +13,58 @@ Git 커밋과 머지를 웹 인터페이스를 통해 쉽게 수행할 수 있�
 
 - Python 3.6 이상
 - Git
-- pip (Python 패키지 관리자)
 
-## 설치 방법
+## 설치 및 실행
 
-1. 저장소 클론
-```bash
-git clone [repository-url]
-cd commit-frame
-```
+1. **저장소 클론** (이미 클론했다면 생략)
+   ```bash
+   git clone [repository-url]
+   cd commit-frame
+   ```
 
-2. 필요한 Python 패키지 설치
-```bash
-pip install flask gitpython
-```
+2. **가상 환경 생성 및 활성화**
+   프로젝트의 독립적인 실행 환경을 위해 가상 환경 사용을 권장합니다.
+   
+   - **macOS / Linux:**
+     ```bash
+     # 가상 환경 생성 (최초 1회)
+     python3 -m venv venv
+     # 가상 환경 활성화 (실행할 때마다)
+     source venv/bin/activate
+     ```
+   - **Windows:**
+     ```bash
+     # 가상 환경 생성 (최초 1회)
+     python -m venv venv
+     # 가상 환경 활성화 (실행할 때마다)
+     .\venv\Scripts\activate
+     ```
 
-## 사용 방법
+3. **의존성 패키지 설치**
+   가상 환경이 활성화된 상태에서 다음 명령어를 실행하여 필요한 라이브러리를 설치합니다.
+   ```bash
+   pip install flask gitpython
+   ```
 
-1. 프로젝트 설정
-   - Git으로 관리하고 있는 프로젝트 디렉토리로 이동
-   - `templates` 폴더와 `git_commit_tool.py` 파일을 프로젝트 루트 디렉토리에 복사
-
-2. 도구 실행
+4. **애플리케이션 실행**
    ```bash
    python git_commit_tool.py
    ```
 
-3. 웹 브라우저에서 다음 주소로 접속
+5. **웹 브라우저에서 접속**
+   실행 후 웹 브라우저에서 다음 주소로 접속하세요.
    ```
    http://localhost:5000
    ```
 
-4. 커밋 메시지 작성
-   - 커밋 타입 선택 (feat, fix, docs 등)
-   - 커밋 제목 입력
-   - 커밋 설명 입력
-   - 'Execute' 버튼 클릭
+## 사용법
 
-5. 브랜치 머지하기 (선택사항)
-   - 소스 브랜치 선택
-   - 타겟 브랜치 선택
-   - 'Merge' 버튼 클릭
+웹 인터페이스에 접속한 후 다음 작업을 수행할 수 있습니다.
+
+- **커밋 생성:**
+  - 커밋 타입, 제목, 설명을 입력하고 'Execute' 버튼 클릭
+- **브랜치 머지:**
+  - 소스 브랜치와 타겟 브랜치를 선택하고 'Merge' 버튼 클릭
 
 ## 주의사항
 
@@ -65,6 +76,6 @@ pip install flask gitpython
 
 문제가 발생하면 다음을 확인하세요:
 1. Git이 올바르게 설치되어 있는지
-2. Python과 필요한 패키지가 설치되어 있는지
+2. Python과 필요한 패키지가 설치되어 있는지 (`pip list` 명령어로 확인)
 3. 현재 디렉토리가 Git 저장소인지
 4. Git 사용자 정보가 올바르게 설정되어 있는지
