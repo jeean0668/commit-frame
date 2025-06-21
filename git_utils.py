@@ -163,21 +163,42 @@ def execute_push(branch):
     return None
 
 def get_git_graph_data():
-    """Git 그래프 데이터를 가져오는 함수"""
+    """Git 그래프에 필요한 커밋과 참조 데이터를 가져오는 함수"""
     try:
         repo = git.Repo(repo_path)
-        commits = list(repo.iter_commits())
-        graph_data = []
         
+        # 모든 커밋 가져오기
+        commits = list(repo.iter_commits('--all'))
+        
+        commit_data = []
         for commit in commits:
-            graph_data.append({
-                'hash': commit.hexsha[:7],
+            commit_data.append({
+                'sha': commit.hexsha,
+                'short_sha': commit.hexsha[:7],
                 'message': commit.message.split('\n')[0],
                 'author': commit.author.name,
                 'date': commit.committed_datetime.strftime('%Y-%m-%d %H:%M'),
-                'branches': [b.name for b in repo.branches if b.commit.hexsha == commit.hexsha]
+                'parents': [p.hexsha for p in commit.parents]
             })
+            
+        # 모든 참조(브랜치, 원격 브랜치, 태그) 가져오기
+        refs = {}
+        # 로컬 브랜치
+        for branch in repo.branches:
+            refs[branch.name] = {'type': 'branch', 'sha': branch.commit.hexsha}
         
-        return graph_data
+        # 원격 브랜치
+        for remote in repo.remotes:
+            for ref in remote.refs:
+                if 'HEAD' in ref.name:
+                    continue
+                refs[ref.name] = {'type': 'remote', 'sha': ref.commit.hexsha}
+        
+        # 태그
+        for tag in repo.tags:
+            refs[tag.name] = {'type': 'tag', 'sha': tag.commit.hexsha}
+
+        return commit_data, refs
     except Exception as e:
-        return [] 
+        print(f"Failed to get git data: {e}")
+        return [], {} 
