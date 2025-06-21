@@ -73,7 +73,7 @@ def main():
                     st.error(error)
                 else:
                     st.success("Commit successful!")
-                    st.experimental_rerun()
+                    st.rerun()
 
     elif action_type == "Merge":
         st.subheader("Merge branches")
@@ -86,7 +86,7 @@ def main():
                 st.error(error)
             else:
                 st.success(f"Successfully merged `{source_branch}` into `{target_branch}`!")
-                st.experimental_rerun()
+                st.rerun()
 
     elif action_type == "Create Branch":
         st.subheader("Create a new branch")
@@ -102,7 +102,7 @@ def main():
                     st.error(error)
                 else:
                     st.success(f"Branch `{new_branch_name}` created successfully from `{base_branch}`!")
-                    st.experimental_rerun()
+                    st.rerun()
 
     elif action_type == "Pull":
         st.subheader("Pull changes from remote")
@@ -115,7 +115,7 @@ def main():
                     st.error(error)
                 else:
                     st.success(f"Successfully pulled changes for `{pull_branch}`!")
-                    st.experimental_rerun()
+                    st.rerun()
 
     elif action_type == "Push":
         st.subheader("Push changes to remote")
@@ -128,7 +128,7 @@ def main():
                     st.error(error)
                 else:
                     st.success(f"Successfully pushed changes for `{push_branch}`!")
-                    st.experimental_rerun()
+                    st.rerun()
 
     elif action_type == "Checkout Branch":
         st.subheader("Switch to a different branch")
@@ -140,7 +140,7 @@ def main():
                 st.error(error)
             else:
                 st.success(f"Switched to branch `{checkout_branch}`.")
-                st.experimental_rerun()
+                st.rerun()
 
 if __name__ == '__main__':
     main() 
